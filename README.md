@@ -13,7 +13,7 @@ Uploads is where the riff files are stored.
 
 playdir is where to copy them to be played.
 
-#Websocket interface to relay controller
+# Websocket interface to relay controller
 A websocket interface is avaialble on port 8080 on the controller.  The interace is simple. The following commands are supported.
   - set bitmask [time]
     - sets the bitmask, allows the next bitmask to be set after [time in ms optional] 
