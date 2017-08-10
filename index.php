@@ -196,12 +196,12 @@ window.onload= function() {
 
 <div id="main-container">
 
-  <div id="leftContent">
+  <div id="leftContent" >
     <div><h4 align="center">Relay Status - Single Clickable</h4>
     </div>
   </div>
   
-  <div id="mainContent">
+  <div id="mainContent" >
 
     <h4 align="center">Riff Files - Click to Queue</h4>
     
@@ -213,7 +213,7 @@ window.onload= function() {
   
   </div> 
   
-  <div id="rightContent">
+  <div id="rightContent" >
   
     <h4 align="center">Currently Playing</h4>
     
