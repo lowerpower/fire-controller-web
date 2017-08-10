@@ -5,6 +5,10 @@
 <head>
 <meta charset="utf-8">
 <link href="/css/uploadfile.css" rel="stylesheet">
+<!-- <script src="/js/jquery.min.js"></script> -->
+
+<script src="/js/jquery-1.12.4.js"></script>
+<script src="/js/dynamic-table.js"></script>
 
 <script language="javascript" type="text/javascript">
 
@@ -95,8 +99,8 @@ var grid = clickableGrid(6,8,function(el,row,col,i){
         ws.send('set '+send_val_string2+send_val_string);
     }
     
-    //if (lastClicked) lastClicked.className='';
-    //lastClicked = el;
+    if ((lastClicked)&&(lastClicked!=el)) lastClicked.className='';
+    lastClicked = el;
 });
 
      
@@ -119,8 +123,67 @@ function clickableGrid( rows, cols, callback ){
     return grid;
 }
 
+function click_dir(item)
+{
+    console.log("clickdir"+item);
+}
+
+function load_dir() 
+{
+    var i=0;
+    var the_api_url = "/dir.php";
+
+    var table = document.getElementById('data-table');
+    $("#data-table").empty();
+    table.className = 'dir';
+
+    $.getJSON(the_api_url, {}, function(data) {
+        $.each(data, function(idx, item){
+            
+            var tr   = table.appendChild(document.createElement('tr'));
+            var cell = tr.appendChild(document.createElement('td'));
+            console.log("item:",item);
+
+            cell.innerHTML=item;
+            cell.addEventListener('click',(function(item){
+                return function(){
+                    click_dir(item);
+                }
+            })(item),false);
+            
+            //console.log("data:",item);
+        });
+    });
+}
+
+/*
+function load_dir(dt)
+{
+    $.get("/dir.php", function(data, status){
+        console.log("data:",data);
+        dt.load(data);
+    });
+}
+*/
+
 window.onload= function() {
-    document.body.appendChild(grid);
+
+    var theDiv = document.getElementById("leftContent");
+    theDiv.appendChild(grid);
+    load_dir();
+/*
+    $.get("/dir.php", function(data, status){
+                alert("Data: " + data + "\nStatus: " + status);
+    });
+
+    $.getJSON("dir.php", function(result){
+        $.each(result, function(i, field){
+            $("div").append(field + " ");
+    });
+*/
+
+
+//document.body.container1.leftContent.appendChild(grid);
 }
 
 </script>
@@ -129,9 +192,25 @@ window.onload= function() {
 
 <body>
 
+<div id="container1">
+  <div id="leftContent">
+  clickable
+  </div>
+  <div id="mainContent"></div>
+  <div id="rightContent">
+  
+    <table id="data-table"></table>
+
+    <br />
+    <button id="btn-load">Reload Dir</button>&nbsp;
+    <button id="btn-clear">Clear List</button>&nbsp;
+
+    
+  </div>
+</div>
+
 </body>
 
-hello
 
 </html>
 

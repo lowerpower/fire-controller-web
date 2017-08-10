@@ -9,6 +9,7 @@ function scan_dir($dir) {
     $ignored = array('.', '..', '.svn', '.htaccess');
 
     $files = array();    
+    $out = array();    
     foreach (scandir($dir) as $file) {
         if (in_array($file, $ignored)) continue;
         $files[$file] = filemtime($dir . '/' . $file);
@@ -17,6 +18,12 @@ function scan_dir($dir) {
     asort($files);
     $files = array_keys($files);
 
+/*    foreach ($files as $file){
+    
+        $out[]=['field1'=>$file];
+    }
+*/
+    //return($out);
     return ($files) ? $files : false;
 }
 
