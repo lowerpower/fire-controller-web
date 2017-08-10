@@ -1,19 +1,22 @@
 #leftContent {
   float:left;
-  width: 30%;
+  width: 40%;
+  border:1px solid #ccc;
 #  background-color: red;
  }
 
  #rightContent {
    float: right;
-   width: 30%;
+   width: 25%;
 #   background-color: green;
+   border:1px solid #ccc;
   }
 
  #mainContent {
-    width: 30%
-    float: right
+    width: 25%
+#    float: left 
 #    background-color: blue;
+    border:1px solid #ccc;
     margin: 1%;
     padding: 1%; //Not Required
   }
@@ -41,9 +44,9 @@
 .dir td {
     cursor:pointer;
 #    width:30px; height:30px;
-    border:1px solid #ccc;
+    border:2px solid #ccc;
     text-align:center;
-    font-family:sans-serif; font-size:13px
+    font-family:sans-serif; font-size:28px
 }
 .dir td.clicked {
     background-color:yellow;

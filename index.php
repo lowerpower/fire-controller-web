@@ -5,6 +5,8 @@
 <head>
 <meta charset="utf-8">
 <link href="/css/uploadfile.css" rel="stylesheet">
+<link href="/cssChanges.css" rel="stylesheet">
+
 <!-- <script src="/js/jquery.min.js"></script> -->
 
 <script src="/js/jquery-1.12.4.js"></script>
@@ -192,21 +194,37 @@ window.onload= function() {
 
 <body>
 
-<div id="container1">
+<div id="main-container">
+
   <div id="leftContent">
-  clickable
+    <div><h4 align="center">Relay Status - Single Clickable</h4>
+    </div>
   </div>
-  <div id="mainContent"></div>
-  <div id="rightContent">
   
+  <div id="mainContent">
+
+    <h4 align="center">Riff Files - Click to Queue</h4>
+    
     <table id="data-table"></table>
 
     <br />
     <button id="btn-load">Reload Dir</button>&nbsp;
     <button id="btn-clear">Clear List</button>&nbsp;
+  
+  </div> 
+  
+  <div id="rightContent">
+  
+    <h4 align="center">Currently Playing</h4>
+    
+    <table id="play-table"></table>
 
+    <br />
+    <button id="btn-play">Play</button>&nbsp;
+    <button id="btn-pause">Pause</button>&nbsp;
     
   </div>
+
 </div>
 
 </body>
