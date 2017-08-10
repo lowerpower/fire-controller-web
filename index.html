@@ -10,7 +10,6 @@
 <!-- <script src="/js/jquery.min.js"></script> -->
 
 <script src="/js/jquery-1.12.4.js"></script>
-<script src="/js/dynamic-table.js"></script>
 
 <script language="javascript" type="text/javascript">
 
@@ -44,7 +43,10 @@
 
     ws.onmessage = function(data) {
       console.log('message');
-      console.log(data.data);
+      console.log("from websocket: ",data.data);
+
+      // Update Grid
+
       //setTimeout(next,500);
 
     };
@@ -65,6 +67,60 @@ function pad(n, width, z) {
 var lastClicked;
 var currentState1=0;
 var currentState2=0;
+
+
+function update_grid(grid_id,bitmask_str)
+{
+    var cell;
+   
+    var bitmask1        = 0;
+    var bitmask2        = 0;
+    var bitmask_string  = bitmask_str;
+
+    if(bitmask_string.length>32)
+        bitmask_string=bitmask_string.slice(-32);
+
+    if(bitmask_string.length>0)
+        bitmask1 = parseInt(bitmask_string.slice(-16),16);
+
+    if(bitmask_string.length>16)
+        bitmask2 = parseInt(bitmask_string(bitmask_string.length-16));
+   
+    console.log("bitmask string 1 = ",bitmask1);
+    console.log("bitmask string 2 = ",bitmask2);
+
+
+    // Loop and set grid
+    for(i=1;i<=48;i++)
+    {
+        // get element in grid
+        el = document.getElementById(grid_id+i);
+
+        // check bitmask
+        if(i<32)
+        {
+            if( bitmask1 & (1<<(i-33)) )
+            {
+                el.className='clicked';
+            }
+            else
+            {
+                el.className='';
+            }
+        }
+        else
+        {
+            if( bitmask2 &  Math.abs(1<<(i-1))  )
+            {
+                el.className='clicked';
+            }
+            else
+            {
+                el.className='';
+            }
+        }
+    }
+}
 
 var grid = clickableGrid(6,8,function(el,row,col,i){
     console.log("You clicked on element:",el);
@@ -114,7 +170,9 @@ function clickableGrid( rows, cols, callback ){
         var tr = grid.appendChild(document.createElement('tr'));
         for (var c=0;c<cols;++c){
             var cell = tr.appendChild(document.createElement('td'));
+            cell.id="grid-"+i;
             cell.innerHTML = ++i;
+            cell.id="grid-"+i;
             cell.addEventListener('click',(function(el,r,c,i){
                 return function(){
                     callback(el,r,c,i);
@@ -128,6 +186,7 @@ function clickableGrid( rows, cols, callback ){
 function click_dir(item)
 {
     console.log("clickdir"+item);
+    update_grid("grid-","886ff9817263");
 }
 
 function load_dir() 
