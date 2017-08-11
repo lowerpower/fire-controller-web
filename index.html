@@ -77,17 +77,20 @@ function update_grid(grid_id,bitmask_str)
     var bitmask2        = 0;
     var bitmask_string  = bitmask_str;
 
-    if(bitmask_string.length>32)
-        bitmask_string=bitmask_string.slice(-32);
+    if(bitmask_string.length>16)
+        bitmask_string=bitmask_string.slice(-16);
 
     if(bitmask_string.length>0)
-        bitmask1 = parseInt(bitmask_string.slice(-16),16);
+        bitmask1 = parseInt(bitmask_string.slice(-8),16);
 
-    if(bitmask_string.length>16)
-        bitmask2 = parseInt(bitmask_string(bitmask_string.length-16));
-   
-    console.log("bitmask string 1 = ",bitmask1);
-    console.log("bitmask string 2 = ",bitmask2);
+    if(bitmask_string.length>8)
+    {
+        bitmask2 = parseInt(bitmask_string.slice(0,bitmask_string.length-8,),16);
+    }
+
+    //console.log("incoming bitmask = ",bitmask_string);
+    //console.log("bitmask string 1 = ",pad(bitmask1.toString(16),8) );
+    //console.log("bitmask string 2 = ",pad(bitmask2.toString(16),8) );
 
 
     // Loop and set grid
@@ -124,8 +127,8 @@ function update_grid(grid_id,bitmask_str)
 
 var grid = clickableGrid(6,8,function(el,row,col,i){
     console.log("You clicked on element:",el);
-    console.log("You clicked on row:",row);
-    console.log("You clicked on col:",col);
+    //console.log("You clicked on row:",row);
+    //console.log("You clicked on col:",col);
     console.log("You clicked on item #:",i);
     console.log("item class name:",el.className);
 
@@ -149,8 +152,8 @@ var grid = clickableGrid(6,8,function(el,row,col,i){
         send_val_string= pad(send_val.toString(16),8);
         send_val_string2= pad(send_val2.toString(16),8);
         
-        console.log("setting bitmask:",send_val_string);
-        console.log("setting bitmask2:",send_val_string2);
+    //    console.log("setting bitmask:",send_val_string);
+    //    console.log("setting bitmask2:",send_val_string2);
         console.log("setting command: set ",send_val_string2+send_val_string);
 
         
