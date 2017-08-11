@@ -190,9 +190,31 @@ function clickableGrid( rows, cols, callback ){
 function click_dir(item)
 {
     console.log("clickdir"+item);
-     ws.send('set '+Math.floor((Math.random() * 0xffffffffff) + 1));
-    //update_grid("grid-","886ff9817263");
+    
+    // append this item to the play queue
+
+    
+
 }
+
+//
+// Append an item to the end of the playlist
+//
+function apppend_playlist_item(item)
+{
+    var table = document.getElementById('data-table');
+
+}
+
+
+function delete_playlist_item(item)
+{
+}
+
+function delete_playlist()
+{
+}
+
 
 function load_dir() 
 {
@@ -232,33 +254,91 @@ function load_dir(dt)
 }
 */
 
+
+function generate_random_bitmask_string(bits,max_bits_set)
+{
+    var bitmask = [];
+    var bitmask_string;
+    var rand_num;
+    var index,max_index=0;
+    var i;
+
+    for (i = 0; i < 4; i++) bitmask[i] = 0;
+
+
+    for(i=0;i<max_bits_set;i++)
+    {
+        rand_num=Math.ceil(Math.random()*bits);
+        index=Math.ceil(rand_num/32)-1;
+
+        console.log("index :"+index+"  rand: "+ rand_num);
+    
+        bitmask[index] |= (1<< ((rand_num-1)-(32*index))  );
+
+        if(index>max_index)
+            max_index=index;
+    }
+
+    //console.log("bitmask string 1 = ",pad(bitmask1.toString(16),8) );
+
+    bitmask_string=bitmask[max_index--].toString(16);
+    while(max_index>=0)
+    {
+        bitmask_string=bitmask_string+pad(bitmask[max_index--].toString(16),8);
+    }
+    console.log("final bitmask: ",bitmask_string);
+
+    return(bitmask_string);
+
+}
+
 window.onload= function() {
 
     var theDiv = document.getElementById("grid1");
     theDiv.appendChild(grid);
+
     load_dir();
 
+
+    //
+    // Set the event buttons
+    //
+
+    //
+    // Grid random and clear buttons
+    //
     $('#btn-random').click(function() {
         ws.send('set '+Math.floor((Math.random() * 0xffffffffff) + 1)+' 500');
     });
 
-    $('#btn-random2').click(function() {
+    $('#btn-2random').click(function() {
         // set random 2 bits
-        // generate 2 numbers between 0 and 47
-
-        ws.send('set '+Math.floor((Math.random() * 0xffffffffff) + 1)+' 500');
+        ws.send('set '+generate_random_bitmask_string(48,2)+' 500');
     });
 
-    $('#btn-random3').click(function() {
+    $('#btn-3random').click(function() {
         // set random 3 bits
-        // generate 3 numbers between 0 and 47
-
-        ws.send('set '+Math.floor((Math.random() * 0xffffffffff) + 1)+' 500');
+        ws.send('set '+generate_random_bitmask_string(48,3)+' 500');
     });
-
+    
     $('#btn-alloff').click(function(e) {
+        // set the relays all off by sending a 'set 0' to the relay controller
         ws.send('set 0');
     });
+
+    //
+    // directory buttons
+    //
+    $('btn-reload-dir').click(function(e) {
+        // reload the riff file directory
+        load_dir();
+    });
+
+    //
+    // Play buttons
+    //
+
+
 
 
 //document.body.container1.leftContent.appendChild(grid);
@@ -293,16 +373,16 @@ window.onload= function() {
     <table id="data-table"></table>
 
     <br />
-    <button id="btn-load">Reload Dir</button>&nbsp;
-    <button id="btn-clear">Clear List</button>&nbsp;
+    <button id="btn-reload-dir">Reload Dir</button>&nbsp;
   
   </div> 
   
   <div id="rightContent" >
   
-    <h4 align="center">Currently Playing</h4>
+    <h4 align="center">Play List</h4>
     
-    <table id="play-table"></table>
+    <table id="play-table">
+    </table>
 
     <br />
     <button id="btn-play">Play</button>&nbsp;
