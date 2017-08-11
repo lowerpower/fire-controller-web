@@ -46,6 +46,7 @@
       console.log("from websocket: ",data.data);
 
       // Update Grid
+      update_grid("grid-",data.data);
 
       //setTimeout(next,500);
 
@@ -189,7 +190,8 @@ function clickableGrid( rows, cols, callback ){
 function click_dir(item)
 {
     console.log("clickdir"+item);
-    update_grid("grid-","886ff9817263");
+     ws.send('set '+Math.floor((Math.random() * 0xffffffffff) + 1));
+    //update_grid("grid-","886ff9817263");
 }
 
 function load_dir() 
@@ -232,19 +234,31 @@ function load_dir(dt)
 
 window.onload= function() {
 
-    var theDiv = document.getElementById("leftContent");
+    var theDiv = document.getElementById("grid1");
     theDiv.appendChild(grid);
     load_dir();
-/*
-    $.get("/dir.php", function(data, status){
-                alert("Data: " + data + "\nStatus: " + status);
+
+    $('#btn-random').click(function() {
+        ws.send('set '+Math.floor((Math.random() * 0xffffffffff) + 1)+' 500');
     });
 
-    $.getJSON("dir.php", function(result){
-        $.each(result, function(i, field){
-            $("div").append(field + " ");
+    $('#btn-random2').click(function() {
+        // set random 2 bits
+        // generate 2 numbers between 0 and 47
+
+        ws.send('set '+Math.floor((Math.random() * 0xffffffffff) + 1)+' 500');
     });
-*/
+
+    $('#btn-random3').click(function() {
+        // set random 3 bits
+        // generate 3 numbers between 0 and 47
+
+        ws.send('set '+Math.floor((Math.random() * 0xffffffffff) + 1)+' 500');
+    });
+
+    $('#btn-alloff').click(function(e) {
+        ws.send('set 0');
+    });
 
 
 //document.body.container1.leftContent.appendChild(grid);
@@ -259,8 +273,17 @@ window.onload= function() {
 <div id="main-container">
 
   <div id="leftContent" >
-    <div><h4 align="center">Relay Status - Single Clickable</h4>
-    </div>
+    <div id="grid1"><h4 align="center">Relay Status - Single Clickable</h4>
+    </div >
+    <table>
+      <tr><td>
+        <br><br>
+        <button id="btn-alloff">All Relays Off</button>&nbsp;
+        <button id="btn-2random">2 Random</button>&nbsp;
+        <button id="btn-3random">3 Random</button>&nbsp;
+        <button id="btn-random">All Random</button>&nbsp;
+        </td></tr>
+    </table>
   </div>
   
   <div id="mainContent" >
@@ -284,6 +307,7 @@ window.onload= function() {
     <br />
     <button id="btn-play">Play</button>&nbsp;
     <button id="btn-pause">Pause</button>&nbsp;
+    <button id="btn-clear">Clear</button>&nbsp;
     
   </div>
 
