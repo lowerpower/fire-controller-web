@@ -189,32 +189,49 @@ function clickableGrid( rows, cols, callback ){
 
 function click_dir(item)
 {
-    console.log("clickdir"+item);
+    //console.log("clickdir: "+item);
     
     // append this item to the play queue
-
-    
+    playlist_item_append(item);
 
 }
 
 //
 // Append an item to the end of the playlist
 //
-function apppend_playlist_item(item)
+function playlist_item_append(item)
 {
-    var table = document.getElementById('data-table');
+    var table = document.getElementById('play-table');
+
+    var tr   = table.appendChild(document.createElement('tr'));
+    var cell = tr.appendChild(document.createElement('td'));
+    cell.innerHTML=item;
+
 
 }
 
 
-function delete_playlist_item(item)
+function playlist_item_delete()
 {
+
+    console.log("delete first");
+    $('#play-table tr:first').remove();
 }
 
-function delete_playlist()
+function playlist_clear()
 {
+    $('#play-table tr').remove();
 }
 
+function playlist_play()
+{
+        
+}
+
+function playlist_pause()
+{
+
+}
 
 function load_dir() 
 {
@@ -243,16 +260,6 @@ function load_dir()
         });
     });
 }
-
-/*
-function load_dir(dt)
-{
-    $.get("/dir.php", function(data, status){
-        console.log("data:",data);
-        dt.load(data);
-    });
-}
-*/
 
 
 function generate_random_bitmask_string(bits,max_bits_set)
@@ -329,7 +336,7 @@ window.onload= function() {
     //
     // directory buttons
     //
-    $('btn-reload-dir').click(function(e) {
+    $('#btn-reload-dir').click(function(e) {
         // reload the riff file directory
         load_dir();
     });
@@ -337,11 +344,26 @@ window.onload= function() {
     //
     // Play buttons
     //
+    $('#btn-play').click(function(e) {
+        // play the riffs queued in the playlist
+        playlist_play();
+    });
+    //
+    // pause
+    //
+    $('#btn-pause').click(function(e) {
+        // pause the playlist from playing 
+        playlist_pause();
+        playlist_item_delete();
+    });
+    //
+    // Clear Playlist
+    //
+    $('#btn-clear').click(function(e) {
+        // clear the playlist 
+        playlist_clear(); 
+    });
 
-
-
-
-//document.body.container1.leftContent.appendChild(grid);
 }
 
 </script>
@@ -381,7 +403,7 @@ window.onload= function() {
   
     <h4 align="center">Play List</h4>
     
-    <table id="play-table">
+    <table class="dir" id="play-table">
     </table>
 
     <br />
