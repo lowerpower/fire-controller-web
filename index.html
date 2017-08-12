@@ -261,6 +261,19 @@ function playlist_play()
 
             if(id.length)
             {
+                $.ajax({
+                  url: "/uploads/"+id,
+                  success: function(data){
+                    // load data into our play array
+                    current_play_file=data.split("\n");  
+
+                    // make sure not null
+                    if(current_play_file.length>0)
+                        playlist_play();         
+                  },
+                  cache: false
+                });
+/*
                 $.get("/uploads/"+id, function( data ) 
                 {
                     // load data into our play array
@@ -270,6 +283,7 @@ function playlist_play()
                     if(current_play_file.length>0)
                         playlist_play();                                                                                    
                 });
+                */
             }
             else
             {
