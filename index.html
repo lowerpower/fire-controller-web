@@ -48,7 +48,8 @@
       // Update Grid
       update_grid("grid-",data.data);
 
-      //setTimeout(next,500);
+      // try to play the next element of playlist
+      playlist_play();
 
     };
 /*
@@ -206,31 +207,89 @@ function playlist_item_append(item)
     var tr   = table.appendChild(document.createElement('tr'));
     var cell = tr.appendChild(document.createElement('td'));
     cell.innerHTML=item;
-
-
 }
 
 
 function playlist_item_delete()
 {
-
     console.log("delete first");
     $('#play-table tr:first').remove();
 }
 
 function playlist_clear()
 {
+    playlist_paused=1;
+    playlist_do_pause=0;
+    current_play_file=[];
+
     $('#play-table tr').remove();
 }
 
+
+var current_play_file=[];
+var playlist_do_pause=0;
+var playlist_paused=1;
+
 function playlist_play()
 {
-        
+    if((playlist_do_pause) && (0==playlist_paused))
+    {
+        ws.send('set 0');
+        playlist_paused=1;
+        playlist_do_pause=0;
+    }
+    if(0==playlist_paused)
+    {
+        // pop off next line
+        if(current_play_file.length>0)
+        {
+            // pop off next element and send it
+            data=current_play_file.shift();
+            ws.send(data);
+            console.log("sending file line : ",data);
+            // if zero, remove first file from list
+            if(0==current_play_file.length)
+            {
+                playlist_item_delete();    
+                playlist_play(); 
+            }        
+        }
+        else
+        {
+            // Get Next File, get name from top of list
+            var id = $("#play-table").find("td:first").text();
+
+            if(id.length)
+            {
+                $.get("/uploads/"+id, function( data ) 
+                {
+                    // load data into our play array
+                    current_play_file=data.split("\n");  
+
+                    // make sure not null
+                    if(current_play_file.length>0)
+                        playlist_play();                                                                                    
+                });
+            }
+            else
+            {
+                // empty, pause
+                playlist_pause=1;
+            }
+        }
+    }
+}
+
+function playlist_start()
+{
+    playlist_paused=0;
+    playlist_play();           
 }
 
 function playlist_pause()
 {
-
+    // Set Pause Flag, engine will pause and send set 0
+    playlist_do_pause=0;
 }
 
 function load_dir() 
@@ -346,7 +405,7 @@ window.onload= function() {
     //
     $('#btn-play').click(function(e) {
         // play the riffs queued in the playlist
-        playlist_play();
+        playlist_start();
     });
     //
     // pause
