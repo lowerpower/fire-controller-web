@@ -300,10 +300,10 @@ function playlist_start()
     playlist_play();           
 }
 
-function playlist_pause()
+function playlist_pause_action()
 {
     // Set Pause Flag, engine will pause and send set 0
-    playlist_do_pause=0;
+    playlist_do_pause=1;
 }
 
 function load_dir() 
@@ -426,8 +426,8 @@ window.onload= function() {
     //
     $('#btn-pause').click(function(e) {
         // pause the playlist from playing 
-        playlist_pause();
-        playlist_item_delete();
+        playlist_pause_action();
+        //playlist_item_delete();
     });
     //
     // Clear Playlist
