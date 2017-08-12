@@ -244,15 +244,25 @@ function playlist_play()
         if(current_play_file.length>0)
         {
             // pop off next element and send it
-            data=current_play_file.shift();
-            ws.send(data);
-            console.log("sending file line : ",data);
-            // if zero, remove first file from list
+            while(current_play_file.length)
+            {
+                data=current_play_file.shift();
+                if(data.length>4)
+                    break;
+            }
+
             if(0==current_play_file.length)
             {
+                // delete the top of the play list
                 playlist_item_delete();    
+                // call us again
                 playlist_play(); 
-            }        
+            }
+            else
+            {
+                ws.send(data);
+                console.log("sending file line : ",data);
+            }
         }
         else
         {
@@ -271,19 +281,11 @@ function playlist_play()
                     if(current_play_file.length>0)
                         playlist_play();         
                   },
-                  cache: false
+                  cache: false,
+                  error: function(textStatus, errorThrown){
+                    alert('request playfile failed');
+                  } 
                 });
-/*
-                $.get("/uploads/"+id, function( data ) 
-                {
-                    // load data into our play array
-                    current_play_file=data.split("\n");  
-
-                    // make sure not null
-                    if(current_play_file.length>0)
-                        playlist_play();                                                                                    
-                });
-                */
             }
             else
             {
@@ -388,17 +390,17 @@ window.onload= function() {
     // Grid random and clear buttons
     //
     $('#btn-random').click(function() {
-        ws.send('set '+Math.floor((Math.random() * 0xffffffffff) + 1)+' 500');
+        ws.send('set '+Math.floor((Math.random() * 0xffffffffff) + 1)+' 5');
     });
 
     $('#btn-2random').click(function() {
         // set random 2 bits
-        ws.send('set '+generate_random_bitmask_string(48,2)+' 500');
+        ws.send('set '+generate_random_bitmask_string(48,2)+' 5');
     });
 
     $('#btn-3random').click(function() {
         // set random 3 bits
-        ws.send('set '+generate_random_bitmask_string(48,3)+' 500');
+        ws.send('set '+generate_random_bitmask_string(48,3)+' 5');
     });
     
     $('#btn-alloff').click(function(e) {
@@ -464,25 +466,24 @@ window.onload= function() {
   <div id="mainContent" >
 
     <h4 align="center">Riff Files - Click to Queue</h4>
+    <button id="btn-reload-dir">Reload Dir</button>&nbsp;
+    <br />
     
     <table id="data-table"></table>
-
-    <br />
-    <button id="btn-reload-dir">Reload Dir</button>&nbsp;
   
   </div> 
   
   <div id="rightContent" >
   
     <h4 align="center">Play List</h4>
-    
-    <table class="dir" id="play-table">
-    </table>
-
-    <br />
     <button id="btn-play">Play</button>&nbsp;
     <button id="btn-pause">Pause</button>&nbsp;
     <button id="btn-clear">Clear</button>&nbsp;
+    <br />
+
+    <table class="dir" id="play-table">
+    </table>
+
     
   </div>
 
