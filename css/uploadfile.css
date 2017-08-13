@@ -57,10 +57,10 @@ div > div {
 #.dir { margin:1em ; border-collapse:collapse  }
 .dir td {
     cursor:pointer;
-#    width:30px; height:30px;
-    border:2px solid #ccc;
+    height:22px;
+    border:3px solid #99f;
     text-align:center;
-    font-family:sans-serif; font-size:28px
+    font-family:sans-serif; font-size:20px
 }
 .dir td.clicked {
     background-color:yellow;
