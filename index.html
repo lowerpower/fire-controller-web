@@ -374,6 +374,11 @@ function generate_random_bitmask_string(bits,max_bits_set)
 
 }
 
+// unload function
+window.onbeforeunload = function () {
+    ws.send('set 0');
+}
+
 window.onload= function() {
 
     var theDiv = document.getElementById("grid1");
