@@ -999,6 +999,7 @@ function mainbottom()
             $a_skin_html[] = $t;
     }
     echo "<div id='main_bottom'>"
+            ."<div><img src=\"riff_file.jpg\"></div>\n"
 //        . "<div style='text-align:right;'>version " . $config['version'] . " | GPL 2009 - " . date('Y') . " <a href='https://github.com/caos30/php_srrFileManager' target='_blank'>srrFileManager at GitHub</a></div>\n"
 //        . "<div style='text-align:right;'>" . $l['AVAILABLE_SKINS'] . " " . implode(' | ', $a_skin_html) . "</div>\n"
         . "</div>\n"
