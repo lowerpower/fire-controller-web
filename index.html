@@ -102,7 +102,7 @@ function update_grid(grid_id,bitmask_str)
         el = document.getElementById(grid_id+i);
 
         // check bitmask
-        if(i<32)
+        if(i<=32)
         {
             if( bitmask1 & (1<<(i-33)) )
             {
