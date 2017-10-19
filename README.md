@@ -22,4 +22,7 @@ A websocket interface is avaialble on port 8080 on the controller.  The interace
   - get
     - returns the current set state bitmask
 
+#requirements
+https://github.com/lowerpower/SainSmartUsbRelay
+
 
