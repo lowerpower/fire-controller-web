@@ -25,4 +25,7 @@ A websocket interface is avaialble on port 8080 on the controller.  The interace
 #requirements
 https://github.com/lowerpower/SainSmartUsbRelay
 
+#also see
+deno on of its operation on the flower tower
+https://www.facebook.com/rearedinsteel/videos/713271008877496/
 
