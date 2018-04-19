@@ -13,6 +13,12 @@
 
 <script language="javascript" type="text/javascript">
 
+//
+// Uncomment to force websocket host (if you want to run this code on local machine)
+//
+//var wshost="file.mycal.net";
+
+
 //    const WebSocket = require('ws');
     
     var loc = window.location, new_uri;
@@ -21,7 +27,15 @@
     } else {
         new_uri = "ws:";
     }
-    new_uri += "//" + loc.host + ":8080";
+
+
+    if (typeof wshost !== 'undefined') {
+        // the variable is defined
+        new_uri +="//" + wshost + ":8080";
+    }else {
+        new_uri += "//" + loc.host + ":8080";
+    }
+    
     new_uri += loc.pathname ;
 
     function next() {
@@ -211,7 +225,7 @@ function clickableGrid( rows, cols, callback ){
             //console.log("cellid "+cell.id);
             i++;
             if (typeof current_config.name[i] === 'undefined')
-                cell.innerHTML = "-------";
+                cell.innerHTML = " - ";
             else 
                 cell.innerHTML = current_config.name[i];
 
