@@ -66,10 +66,18 @@ function pad(n, width, z) {
 }
 
 
+function Config()
+{
+    this.map=[];
+    this.name=[];
+    this.relay=[];
+}
+
+
 var lastClicked;
 var currentState1=0;
 var currentState2=0;
-
+var current_config= new Config();
 
 function update_grid(grid_id,bitmask_str)
 {
@@ -97,9 +105,16 @@ function update_grid(grid_id,bitmask_str)
 
     // Loop and set grid
     for(i=1;i<=48;i++)
+    //for(i=1;i<=144;i++)
     {
+        // Translate
+        trans=current_config.relay[i];
+
+     if(trans)
+     {
         // get element in grid
-        el = document.getElementById(grid_id+i);
+        //el = document.getElementById(grid_id+i);
+        el = document.getElementById(grid_id+trans);
 
         // check bitmask
         if(i<=32)
@@ -124,16 +139,28 @@ function update_grid(grid_id,bitmask_str)
                 el.className='';
             }
         }
+     }
     }
 }
 
-var grid = clickableGrid(6,8,function(el,row,col,i){
-//var grid = clickableGrid(12,12,function(el,row,col,i){
+
+//var grid = clickableGrid(6,8,function(el,row,col,i){
+var grid = {};
+
+function build_grid()
+{
+    console.log("build_grid");
+    
+    
+    grid=clickableGrid(12,12,function(el,row,col,i){
     console.log("You clicked on element:",el);
     //console.log("You clicked on row:",row);
     //console.log("You clicked on col:",col);
     console.log("You clicked on item #:",i);
     console.log("item class name:",el.className);
+
+    // Translate
+    i=current_config.map[i];
 
     send_val=send_val2=0;
     if('clicked'==el.className)
@@ -167,41 +194,93 @@ var grid = clickableGrid(6,8,function(el,row,col,i){
     lastClicked = el;
 });
 
+}
      
 function clickableGrid( rows, cols, callback ){
     var i=0;
     var grid = document.createElement('table');
     grid.className = 'grid';
+
+    console.log("clickable grid");
+
     for (var r=0;r<rows;++r){
         var tr = grid.appendChild(document.createElement('tr'));
         for (var c=0;c<cols;++c){
             var cell = tr.appendChild(document.createElement('td'));
+            //cell.id="grid-"+i;
+            //console.log("cellid "+cell.id);
+            i++;
+            if (typeof current_config.name[i] === 'undefined')
+                cell.innerHTML = "-------";
+            else 
+                cell.innerHTML = current_config.name[i];
+
             cell.id="grid-"+i;
-            cell.innerHTML = ++i;
-            cell.id="grid-"+i;
-            cell.addEventListener('click',(function(el,r,c,i){
-                return function(){
-                    callback(el,r,c,i);
-                }
-            })(cell,r,c,i),false);
+            if(0!=current_config.map[i])
+            {
+                cell.addEventListener('click',(function(el,r,c,i){
+                    return function(){
+                        callback(el,r,c,i);
+                    }
+                })(cell,r,c,i),false);
+            }
         }
     }
     return grid;
 }
 
 
-function load_config()
+function load_config(current_config)
 {
+    console.log("load config");
 	$.ajax({
-            url: "/uploads/"+config.conf,
+            url: "/uploads/config.conf",
             success: function(data){
    	        	// load data into our play array
-            	current_config=data.split("\n");
+            	arr=data.split("\n");
+                
+                console.log("array = "+arr); 
+                //
+                // Make correct array
+                for(i in arr) {
+                    console.log("i = "+arr[i]); 
+                    el=arr[i].split(" ");
+                    console.log("e = "+el); 
+                    if(el[0])
+                    {
+                        console.log("e = "+el); 
+                        current_config.map[el[0]]=el[1];
+                        current_config.relay[el[1]]=el[0];
+                        if(el.length>2)
+                        {
+                            current_config.name[el[0]]=el[2];
+                        }
+                    }
+                }
 
             	// make sure not null
-            	if(0==current_conf.length==0)
+            	if(0==current_config.length)
+            	{
 	            	alert("configuration file not found, using default config");
-            
+                    // Generate Default Config
+                    for(i=1;i<=144;i++)
+                    {
+                        if(i<=48)
+                        {
+                            current_config.map[i]=i;
+                            current_config.name[i]=i;
+                            current_config.relay[i]=i;
+                        }
+                        else
+                        {
+                            current_config.map[i]=0;
+                            current_config.name[i]=i;
+                        }
+                    }
+
+                }
+                console.log("loaded_config ",current_config);
+                after_config();
 			},
             cache: false,
             error: function(textStatus, errorThrown){
@@ -403,12 +482,20 @@ window.onbeforeunload = function () {
 }
 
 window.onload= function() {
+    load_dir();
+    load_config(current_config,after_config);
+}
+
+function after_config(){
+    
+    console.log("after_config");
+
+    build_grid();
+
+//window.onload= function() {
 
     var theDiv = document.getElementById("grid1");
     theDiv.appendChild(grid);
-
-    load_dir();
-
 
     //
     // Set the event buttons
