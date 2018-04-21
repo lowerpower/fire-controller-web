@@ -10,12 +10,12 @@ or if it needs some tweeks :)*/
     border-radius: 5px;
     text-align: center;
     font-family: sans-serif;
-    font-size: 39px;
+    font-size: 24px;
 }
 .grid {
 margin: -1em auto;
 margin-right: 5%;
 height: -webkit-fill-available;
 width: -webkit-fill-available;
-border: 9px steelblue solid;
+border: 12px steelblue solid;
 }

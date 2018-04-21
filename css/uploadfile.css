@@ -51,6 +51,11 @@ div > div {
     font-weight:bold; color:red;
 }
 
+.grid td.disabled {
+    background-color:grey;
+    font-weight:bold; color:grey;
+}
+
 
 
 #.dir { margin:1em auto; border-collapse:collapse }

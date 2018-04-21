@@ -85,6 +85,7 @@ function Config()
     this.map=[];
     this.name=[];
     this.relay=[];
+    this.impulse=[];
 }
 
 
@@ -123,6 +124,7 @@ function update_grid(grid_id,bitmask_str)
     {
         // Translate
         trans=current_config.relay[i];
+        //console.log("Translate config relay[] ",i," to ",trans);
 
      if(trans)
      {
@@ -139,7 +141,8 @@ function update_grid(grid_id,bitmask_str)
             }
             else
             {
-                el.className='';
+                if(el.className=='clicked')
+                    el.className='';
             }
         }
         else
@@ -150,7 +153,8 @@ function update_grid(grid_id,bitmask_str)
             }
             else
             {
-                el.className='';
+                if(el.className=='clicked')
+                    el.className='';
             }
         }
      }
@@ -166,7 +170,7 @@ function build_grid()
     console.log("build_grid");
     
     
-    grid=clickableGrid(12,12,function(el,row,col,i){
+    grid=clickableGrid(11,11,function(el,row,col,i){
     console.log("You clicked on element:",el);
     //console.log("You clicked on row:",row);
     //console.log("You clicked on col:",col);
@@ -174,7 +178,9 @@ function build_grid()
     console.log("item class name:",el.className);
 
     // Translate
-    i=current_config.map[i];
+    j=current_config.map[i];
+    
+    console.log("translate to relay:",j);
 
     send_val=send_val2=0;
     if('clicked'==el.className)
@@ -185,23 +191,30 @@ function build_grid()
     else
     {
         el.className='clicked';
-        if(i>32)
+        if(j>32)
         {
-            send_val2=1<<(i-33);
+            send_val2=1<<(j-33);
         }
         else
         {
-            send_val=Math.abs(1<<(i-1));
+            send_val=Math.abs(1<<(j-1));
         }
         send_val_string= pad(send_val.toString(16),8);
         send_val_string2= pad(send_val2.toString(16),8);
         
     //    console.log("setting bitmask:",send_val_string);
     //    console.log("setting bitmask2:",send_val_string2);
-        console.log("setting command: set ",send_val_string2+send_val_string);
 
+        // use time from config
+        console.log("index %d",i);
+        if (typeof current_config.impulse[i] === 'undefined')
+            impulse_time=1;
+        else
+            impulse_time=current_config.impulse[i]; 
         
-        ws.send('set '+send_val_string2+send_val_string);
+        console.log("setting command: set",send_val_string2+send_val_string+" "+impulse_time);
+
+        ws.send('set '+send_val_string2+send_val_string+" "+impulse_time);
     }
     
     if ((lastClicked)&&(lastClicked!=el)) lastClicked.className='';
@@ -225,10 +238,17 @@ function clickableGrid( rows, cols, callback ){
             //console.log("cellid "+cell.id);
             i++;
             if (typeof current_config.name[i] === 'undefined')
+            {
+                cell.className='disabled';
                 cell.innerHTML = " - ";
+            }
             else 
+            {
+                if(0==current_config.map[i])
+                    cell.className='disabled';
                 cell.innerHTML = current_config.name[i];
 
+            }
             cell.id="grid-"+i;
             if(0!=current_config.map[i])
             {
@@ -268,6 +288,8 @@ function load_config(current_config)
                         if(el.length>2)
                         {
                             current_config.name[el[0]]=el[2];
+                            if(el.length>3)
+                                current_config.impulse[el[0]]=el[3];
                         }
                     }
                 }
@@ -276,8 +298,8 @@ function load_config(current_config)
             	if(0==current_config.length)
             	{
 	            	alert("configuration file not found, using default config");
-                    // Generate Default Config
-                    for(i=1;i<=144;i++)
+                    // Generate Default Config (11x11 grid)
+                    for(i=1;i<=(11*11);i++)
                     {
                         if(i<=48)
                         {
