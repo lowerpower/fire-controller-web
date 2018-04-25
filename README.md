@@ -29,3 +29,10 @@ https://github.com/lowerpower/SainSmartUsbRelay
 deno on of its operation on the flower tower
 https://www.facebook.com/rearedinsteel/videos/713271008877496/
 
+## Links
+* https://github.com/lowerpower/SainSmartUsbRelay - relay driver/websocket backend for this project.
+* https://www.facebook.com/rearedinsteel/ - Reared In Steel facebook.  
+* https://www.facebook.com/rearedinsteel/videos/713271008877496/ - project in action on flower tower
+* [Video Demo](https://www.youtube.com/watch?v=d_1EEWdWekI) of this project integrated into a solution.
+* [websocketd](https://github.com/joewalnes/websocketd) - allows websocket control of a stdio program.
+
