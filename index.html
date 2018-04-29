@@ -13,6 +13,12 @@
 
 <script language="javascript" type="text/javascript">
 
+//
+// Uncomment to force websocket host (if you want to run this code on local machine)
+//
+//var wshost="file.mycal.net";
+
+
 //    const WebSocket = require('ws');
     
     var loc = window.location, new_uri;
@@ -21,7 +27,15 @@
     } else {
         new_uri = "ws:";
     }
-    new_uri += "//" + loc.host + ":8080";
+
+
+    if (typeof wshost !== 'undefined') {
+        // the variable is defined
+        new_uri +="//" + wshost + ":8080";
+    }else {
+        new_uri += "//" + loc.host + ":8080";
+    }
+    
     new_uri += loc.pathname ;
 
     function next() {
@@ -66,10 +80,19 @@ function pad(n, width, z) {
 }
 
 
+function Config()
+{
+    this.map=[];
+    this.name=[];
+    this.relay=[];
+    this.impulse=[];
+}
+
+
 var lastClicked;
 var currentState1=0;
 var currentState2=0;
-
+var current_config= new Config();
 
 function update_grid(grid_id,bitmask_str)
 {
@@ -97,9 +120,17 @@ function update_grid(grid_id,bitmask_str)
 
     // Loop and set grid
     for(i=1;i<=48;i++)
+    //for(i=1;i<=144;i++)
     {
+        // Translate
+        trans=current_config.relay[i];
+        //console.log("Translate config relay[] ",i," to ",trans);
+
+     if(trans)
+     {
         // get element in grid
-        el = document.getElementById(grid_id+i);
+        //el = document.getElementById(grid_id+i);
+        el = document.getElementById(grid_id+trans);
 
         // check bitmask
         if(i<=32)
@@ -110,7 +141,8 @@ function update_grid(grid_id,bitmask_str)
             }
             else
             {
-                el.className='';
+                if(el.className=='clicked')
+                    el.className='';
             }
         }
         else
@@ -121,19 +153,34 @@ function update_grid(grid_id,bitmask_str)
             }
             else
             {
-                el.className='';
+                if(el.className=='clicked')
+                    el.className='';
             }
         }
+     }
     }
 }
 
-var grid = clickableGrid(6,8,function(el,row,col,i){
-//var grid = clickableGrid(12,12,function(el,row,col,i){
+
+//var grid = clickableGrid(6,8,function(el,row,col,i){
+var grid = {};
+
+function build_grid()
+{
+    console.log("build_grid");
+    
+    
+    grid=clickableGrid(11,11,function(el,row,col,i){
     console.log("You clicked on element:",el);
     //console.log("You clicked on row:",row);
     //console.log("You clicked on col:",col);
     console.log("You clicked on item #:",i);
     console.log("item class name:",el.className);
+
+    // Translate
+    j=current_config.map[i];
+    
+    console.log("translate to relay:",j);
 
     send_val=send_val2=0;
     if('clicked'==el.className)
@@ -144,64 +191,132 @@ var grid = clickableGrid(6,8,function(el,row,col,i){
     else
     {
         el.className='clicked';
-        if(i>32)
+        if(j>32)
         {
-            send_val2=1<<(i-33);
+            send_val2=1<<(j-33);
         }
         else
         {
-            send_val=Math.abs(1<<(i-1));
+            send_val=Math.abs(1<<(j-1));
         }
         send_val_string= pad(send_val.toString(16),8);
         send_val_string2= pad(send_val2.toString(16),8);
         
     //    console.log("setting bitmask:",send_val_string);
     //    console.log("setting bitmask2:",send_val_string2);
-        console.log("setting command: set ",send_val_string2+send_val_string);
 
+        // use time from config
+        console.log("index %d",i);
+        if (typeof current_config.impulse[i] === 'undefined')
+            impulse_time=1;
+        else
+            impulse_time=current_config.impulse[i]; 
         
-        ws.send('set '+send_val_string2+send_val_string);
+        console.log("setting command: set",send_val_string2+send_val_string+" "+impulse_time);
+
+        ws.send('set '+send_val_string2+send_val_string+" "+impulse_time);
     }
     
     if ((lastClicked)&&(lastClicked!=el)) lastClicked.className='';
     lastClicked = el;
 });
 
+}
      
 function clickableGrid( rows, cols, callback ){
     var i=0;
     var grid = document.createElement('table');
     grid.className = 'grid';
+
+    console.log("clickable grid");
+
     for (var r=0;r<rows;++r){
         var tr = grid.appendChild(document.createElement('tr'));
         for (var c=0;c<cols;++c){
             var cell = tr.appendChild(document.createElement('td'));
+            //cell.id="grid-"+i;
+            //console.log("cellid "+cell.id);
+            i++;
+            if (typeof current_config.name[i] === 'undefined')
+            {
+                cell.className='disabled';
+                cell.innerHTML = " - ";
+            }
+            else 
+            {
+                if(0==current_config.map[i])
+                    cell.className='disabled';
+                cell.innerHTML = current_config.name[i];
+
+            }
             cell.id="grid-"+i;
-            cell.innerHTML = ++i;
-            cell.id="grid-"+i;
-            cell.addEventListener('click',(function(el,r,c,i){
-                return function(){
-                    callback(el,r,c,i);
-                }
-            })(cell,r,c,i),false);
+            if(0!=current_config.map[i])
+            {
+                cell.addEventListener('click',(function(el,r,c,i){
+                    return function(){
+                        callback(el,r,c,i);
+                    }
+                })(cell,r,c,i),false);
+            }
         }
     }
     return grid;
 }
 
 
-function load_config()
+function load_config(current_config)
 {
+    console.log("load config");
 	$.ajax({
-            url: "/uploads/"+config.conf,
+            url: "/uploads/config.conf",
             success: function(data){
    	        	// load data into our play array
-            	current_config=data.split("\n");
+            	arr=data.split("\n");
+                
+                console.log("array = "+arr); 
+                //
+                // Make correct array
+                for(i in arr) {
+                    console.log("i = "+arr[i]); 
+                    el=arr[i].split(" ");
+                    console.log("e = "+el); 
+                    if(el[0])
+                    {
+                        console.log("e = "+el); 
+                        current_config.map[el[0]]=el[1];
+                        current_config.relay[el[1]]=el[0];
+                        if(el.length>2)
+                        {
+                            current_config.name[el[0]]=el[2];
+                            if(el.length>3)
+                                current_config.impulse[el[0]]=el[3];
+                        }
+                    }
+                }
 
             	// make sure not null
-            	if(0==current_conf.length==0)
+            	if(0==current_config.length)
+            	{
 	            	alert("configuration file not found, using default config");
-            
+                    // Generate Default Config (11x11 grid)
+                    for(i=1;i<=(11*11);i++)
+                    {
+                        if(i<=48)
+                        {
+                            current_config.map[i]=i;
+                            current_config.name[i]=i;
+                            current_config.relay[i]=i;
+                        }
+                        else
+                        {
+                            current_config.map[i]=0;
+                            current_config.name[i]=i;
+                        }
+                    }
+
+                }
+                console.log("loaded_config ",current_config);
+                after_config();
 			},
             cache: false,
             error: function(textStatus, errorThrown){
@@ -403,12 +518,20 @@ window.onbeforeunload = function () {
 }
 
 window.onload= function() {
+    load_dir();
+    load_config(current_config,after_config);
+}
+
+function after_config(){
+    
+    console.log("after_config");
+
+    build_grid();
+
+//window.onload= function() {
 
     var theDiv = document.getElementById("grid1");
     theDiv.appendChild(grid);
-
-    load_dir();
-
 
     //
     // Set the event buttons
