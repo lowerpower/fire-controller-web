@@ -541,17 +541,17 @@ function after_config(){
     // Grid random and clear buttons
     //
     $('#btn-random').click(function() {
-        ws.send('set '+Math.floor((Math.random() * 0xffffffffff) + 1)+' 5');
+        ws.send('set '+Math.floor((Math.random() * 0xffffffffff) + 1)+' 500');
     });
 
     $('#btn-2random').click(function() {
         // set random 2 bits
-        ws.send('set '+generate_random_bitmask_string(48,2)+' 5');
+        ws.send('set '+generate_random_bitmask_string(48,2)+' 500');
     });
 
     $('#btn-3random').click(function() {
         // set random 3 bits
-        ws.send('set '+generate_random_bitmask_string(48,3)+' 5');
+        ws.send('set '+generate_random_bitmask_string(48,3)+' 500');
     });
     
     $('#btn-alloff').click(function(e) {
