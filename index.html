@@ -8,18 +8,14 @@
 <link href="/cssChanges.css" rel="stylesheet">
 
 <!-- <script src="/js/jquery.min.js"></script> -->
-
 <script src="/js/jquery-1.12.4.js"></script>
-
 <script language="javascript" type="text/javascript">
 
 //
 // Uncomment to force websocket host (if you want to run this code on local machine)
 //
 //var wshost="file.mycal.net";
-
-
-//    const WebSocket = require('ws');
+//const WebSocket = require('ws');
     
     var loc = window.location, new_uri;
     if (loc.protocol === "https:") {
@@ -51,7 +47,7 @@
     };
 
     ws.onopen = function() {
-        console.log('CONNECTED');
+        console.log('CONNECTED (set 0)');
         ws.send('set 0');
     };
 
@@ -100,10 +96,15 @@ function update_grid(grid_id,bitmask_str)
    
     var bitmask1        = 0;
     var bitmask2        = 0;
+    var bitmask3        = 0;
+    var bitmask4        = 0;
     var bitmask_string  = bitmask_str;
 
-    if(bitmask_string.length>16)
-        bitmask_string=bitmask_string.slice(-16);
+
+	// Need to increae this to at least 128
+	//
+    if(bitmask_string.length>32)
+        bitmask_string=bitmask_string.slice(-32);
 
     if(bitmask_string.length>0)
         bitmask1 = parseInt(bitmask_string.slice(-8),16);
@@ -113,9 +114,24 @@ function update_grid(grid_id,bitmask_str)
         bitmask2 = parseInt(bitmask_string.slice(0,bitmask_string.length-8,),16);
     }
 
-    //console.log("incoming bitmask = ",bitmask_string);
-    //console.log("bitmask string 1 = ",pad(bitmask1.toString(16),8) );
-    //console.log("bitmask string 2 = ",pad(bitmask2.toString(16),8) );
+    if(bitmask_string.length>16)
+    {
+        bitmask3 = parseInt(bitmask_string.slice(0,bitmask_string.length-16,),16);
+    }
+    
+	if(bitmask_string.length>24)
+    {
+        bitmask4 = parseInt(bitmask_string.slice(0,bitmask_string.length-24,),16);
+    }
+
+
+
+
+    console.log("incoming bitmask = ",bitmask_string);
+    console.log("bitmask string 1 = ",pad(bitmask1.toString(16),8) );
+    console.log("bitmask string 2 = ",pad(bitmask2.toString(16),8) );
+    console.log("bitmask string 3 = ",pad(bitmask3.toString(16),8) );
+    console.log("bitmask string 4 = ",pad(bitmask4.toString(16),8) );
 
 
     // Loop and set grid
@@ -145,9 +161,33 @@ function update_grid(grid_id,bitmask_str)
                     el.className='';
             }
         }
-        else
+        else if (i<=64)
         {
             if( bitmask2 &  Math.abs(1<<(i-1))  )
+            {
+                el.className='clicked';
+            }
+            else
+            {
+                if(el.className=='clicked')
+                    el.className='';
+            }
+        }
+        else if (i<=96)
+        {
+            if( bitmask3 &  Math.abs(1<<(i-1))  )
+            {
+                el.className='clicked';
+            }
+            else
+            {
+                if(el.className=='clicked')
+                    el.className='';
+            }
+        }
+        else if (i<=128)
+        {
+            if( bitmask4 &  Math.abs(1<<(i-1))  )
             {
                 el.className='clicked';
             }
