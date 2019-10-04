@@ -135,8 +135,8 @@ function update_grid(grid_id,bitmask_str)
 
 
     // Loop and set grid
-    for(i=1;i<=48;i++)
-    //for(i=1;i<=144;i++)
+    //for(i=1;i<=48;i++)
+    for(i=1;i<=144;i++)
     {
         // Translate
         trans=current_config.relay[i];
@@ -222,7 +222,7 @@ function build_grid()
     
     console.log("translate to relay:",j);
 
-    send_val=send_val2=0;
+    send_val=send_val2=send_val3=send_val4=0;
     if('clicked'==el.className)
     {
         el.className='';
@@ -231,9 +231,18 @@ function build_grid()
     else
     {
         el.className='clicked';
-        if(j>32)
+
+        if(j>96)
         {
-            send_val2=1<<(j-33);
+            send_val4=Math.abs(1<<(j-65));
+        }
+        else if(j>64)
+        {
+            send_val3=Math.abs(1<<(j-65));
+        }
+        else if(j>32)
+        {
+            send_val2=Math.abs(1<<(j-33));
         }
         else
         {
@@ -241,9 +250,13 @@ function build_grid()
         }
         send_val_string= pad(send_val.toString(16),8);
         send_val_string2= pad(send_val2.toString(16),8);
+        send_val_string3= pad(send_val3.toString(16),8);
+        send_val_string4= pad(send_val4.toString(16),8);
         
-    //    console.log("setting bitmask:",send_val_string);
-    //    console.log("setting bitmask2:",send_val_string2);
+        console.log("setting bitmask:",send_val_string);
+        console.log("setting bitmask2:",send_val_string2);
+        console.log("setting bitmask3:",send_val_string3);
+        console.log("setting bitmask4:",send_val_string4);
 
         // use time from config
         console.log("index %d",i);
@@ -252,9 +265,9 @@ function build_grid()
         else
             impulse_time=current_config.impulse[i]; 
         
-        console.log("setting command: set",send_val_string2+send_val_string+" "+impulse_time);
+        console.log("setting command: set",send_val_string4+send_val_string3+send_val_string2+send_val_string+" "+impulse_time);
 
-        ws.send('set '+send_val_string2+send_val_string+" "+impulse_time);
+        ws.send('set '+send_val_string4+send_val_string3+send_val_string2+send_val_string+" "+impulse_time);
     }
     
     if ((lastClicked)&&(lastClicked!=el)) lastClicked.className='';
