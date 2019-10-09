@@ -117,7 +117,7 @@ $lang_dir = dirname(__FILE__) . '/languages';
     
     // == save the lang at a cookie
         if (!isset($_COOKIE['lang']) || $_COOKIE['lang']!=$lang) {
-            setcookie('lang', $lang, time() + 100000000000);
+            setcookie('lang', $lang, time() + 10000000);
         }
 
 // == load language translations
