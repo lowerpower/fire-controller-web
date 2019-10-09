@@ -16,7 +16,15 @@
 //
 //var wshost="file.mycal.net";
 //const WebSocket = require('ws');
-    
+function wsKeepAlive()
+{
+    console.log("ping");
+    ws.send('ping');
+    // Once a min
+    setTimeout(wsKeepAlive, 60000);
+}
+
+
     var loc = window.location, new_uri;
     if (loc.protocol === "https:") {
         new_uri = "wss:";
@@ -27,20 +35,25 @@
 
     if (typeof wshost !== 'undefined') {
         // the variable is defined
-        new_uri +="//" + wshost + ":8080";
+        var url = new URL(new_uri+"//"+ wshost);
+        url.port = '';
+        new_uri = url;
     }else {
-        new_uri += "//" + loc.host + ":8080";
+        //new_uri += "//" + loc.host + ":8080";
+        var url = new URL(new_uri+"//"+ loc.host + loc.pathname);
+        url.port = '8080';
+        new_uri = url;
     }
     
-    new_uri += loc.pathname ;
+    //new_uri += loc.pathname ;
 
     function next() {
       ws.send('set '+Math.floor((Math.random() * 0xffffffff) + 1));
     }
 
+    console.log("websock connect to "+new_uri+"   loc.pathname="+loc.pathname);
+    
     var ws = new WebSocket(new_uri);
-
-    console.log("websock connect to "+new_uri);
 
     ws.onclose = function() {
         console.log('DISCONNECT');
@@ -49,17 +62,23 @@
     ws.onopen = function() {
         console.log('CONNECTED (set 0)');
         ws.send('set 0');
+
+        // keepalive every 1 min
+        setTimeout(wsKeepAlive, 1000);
     };
 
     ws.onmessage = function(data) {
       console.log('message');
       console.log("from websocket: ",data.data);
 
-      // Update Grid
-      update_grid("grid-",data.data);
+      if(data.data!=='pong')
+      {
+        // Update Grid
+        update_grid("grid-",data.data);
 
-      // try to play the next element of playlist
-      playlist_play();
+        // try to play the next element of playlist
+        playlist_play();
+      }
 
     };
 /*
@@ -84,7 +103,6 @@ function Config()
     this.impulse=[];
 }
 
-
 var lastClicked;
 var currentState1=0;
 var currentState2=0;
@@ -107,25 +125,30 @@ function update_grid(grid_id,bitmask_str)
         bitmask_string=bitmask_string.slice(-32);
 
     if(bitmask_string.length>0)
+    {
         bitmask1 = parseInt(bitmask_string.slice(-8),16);
-
+        bit1=bitmask_string.slice(-8);
+        //console.log("bit1 = ",bit1);
+    }
     if(bitmask_string.length>8)
     {
-        bitmask2 = parseInt(bitmask_string.slice(0,bitmask_string.length-8,),16);
+        //bitmask2 = parseInt(bitmask_string.slice(0,bitmask_string.length-8,),16);
+        bitmask2 = parseInt(bitmask_string.slice(-16,-8),16);
+        //bit2=bitmask_string.slice(-16,-8);
+        //console.log("bit2 = ",bit2);
     }
 
     if(bitmask_string.length>16)
     {
-        bitmask3 = parseInt(bitmask_string.slice(0,bitmask_string.length-16,),16);
+        //bitmask3 = parseInt(bitmask_string.slice(0,bitmask_string.length-16,),16);
+        bitmask3 = parseInt(bitmask_string.slice(-24,-16),16);
     }
     
 	if(bitmask_string.length>24)
     {
-        bitmask4 = parseInt(bitmask_string.slice(0,bitmask_string.length-24,),16);
+        //bitmask4 = parseInt(bitmask_string.slice(0,bitmask_string.length-24,),16);
+        bitmask4 = parseInt(bitmask_string.slice(-32,-24),16);
     }
-
-
-
 
     console.log("incoming bitmask = ",bitmask_string);
     console.log("bitmask string 1 = ",pad(bitmask1.toString(16),8) );
