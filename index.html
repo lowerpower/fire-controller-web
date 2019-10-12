@@ -25,6 +25,8 @@ function wsKeepAlive()
 }
 
 
+    var display_bitmask=0;
+
     var loc = window.location, new_uri;
     if (loc.protocol === "https:") {
         new_uri = "wss:";
@@ -68,7 +70,7 @@ function wsKeepAlive()
     };
 
     ws.onmessage = function(data) {
-      console.log('message');
+      //console.log('message');
       console.log("from websocket: ",data.data);
 
       if(data.data!=='pong')
@@ -150,12 +152,14 @@ function update_grid(grid_id,bitmask_str)
         bitmask4 = parseInt(bitmask_string.slice(-32,-24),16);
     }
 
-    console.log("incoming bitmask = ",bitmask_string);
-    console.log("bitmask string 1 = ",pad(bitmask1.toString(16),8) );
-    console.log("bitmask string 2 = ",pad(bitmask2.toString(16),8) );
-    console.log("bitmask string 3 = ",pad(bitmask3.toString(16),8) );
-    console.log("bitmask string 4 = ",pad(bitmask4.toString(16),8) );
-
+    if(display_bitmask)
+    {
+        console.log("incoming bitmask = ",bitmask_string);
+        console.log("bitmask string 1 = ",pad(bitmask1.toString(16),8) );
+        console.log("bitmask string 2 = ",pad(bitmask2.toString(16),8) );
+        console.log("bitmask string 3 = ",pad(bitmask3.toString(16),8) );
+        console.log("bitmask string 4 = ",pad(bitmask4.toString(16),8) );
+    }
 
     // Loop and set grid
     //for(i=1;i<=48;i++)
@@ -475,7 +479,8 @@ function playlist_play()
             else
             {
                 ws.send(data);
-                console.log("sending file line : ",data);
+                var milliseconds = new Date().getTime();
+                console.log("["+milliseconds+"] sending file line : ",data);
             }
         }
         else
