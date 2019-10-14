@@ -447,6 +447,8 @@ function playlist_clear()
 var current_play_file=[];
 var playlist_do_pause=0;
 var playlist_paused=1;
+var last_time=1
+var this_time=1;
 
 function playlist_play()
 {
@@ -479,8 +481,11 @@ function playlist_play()
             else
             {
                 ws.send(data);
-                var milliseconds = new Date().getTime();
-                console.log("["+milliseconds+"] sending file line : ",data);
+                var tttime = new Date();
+                var milliseconds=tttime.getTime();
+                this_time=milliseconds-last_time;
+                console.log("["+milliseconds+"] D["+this_time+"] sending file line : ",data);
+                last_time=milliseconds;
             }
         }
         else
