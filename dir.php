@@ -6,7 +6,7 @@
 
 
 function scan_dir($dir) {
-    $ignored = array('.', '..', '.svn', '.htaccess','config.conf');
+    $ignored = array('.', '..', '.svn', '.htaccess','config.conf','map.txt','map-final.txt','t');
 
     $files = array();    
     $out = array();    
