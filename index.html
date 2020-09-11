@@ -630,6 +630,10 @@ function after_config(){
         ws.send('set '+Math.floor((Math.random() * 0xffffffffff) + 1)+' 500');
     });
 
+    $('#send-reset').click(function() {
+        ws.send('quit');
+    });
+
     $('#btn-2random').click(function() {
         // set random 2 bits
         ws.send('set '+generate_random_bitmask_string(48,2)+' 500');
@@ -696,6 +700,7 @@ function after_config(){
         <button id="btn-2random">2 Random</button>&nbsp;
         <button id="btn-3random">3 Random</button>&nbsp;
         <button id="btn-random">All Random</button>&nbsp;
+        <button id="send-reset">Send Reset</button>&nbsp;
         </td></tr>
     </table>
   </div>
