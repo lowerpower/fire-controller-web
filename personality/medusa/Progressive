@@ -1,0 +1,20 @@
+#
+# progressive wall of flames
+#   7    6    5    4    3    2     1    0
+#   34 21zy xwvu tsrq ponm lkji  hgfe dcba
+# 0011 1111 1111 1111 1111 1111  1111 1111
+#
+#ABCD EFGH IJK MN W
+set 0000004037ff 100
+#add LPRSV 
+set 00000026cfff 100
+#add OTQ UXY 
+set 000001ffffff 100
+#Crown
+set 00003fffffff 200
+#Cobra spit
+set 000000000000 200
+set 000002000000 100
+set 000000000000 300
+set 000002000000 100
+set 000000000000 0

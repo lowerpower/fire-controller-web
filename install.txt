@@ -1,0 +1,30 @@
+
+#
+# Update
+#
+sudo apt update
+sudo apt full−upgrade
+
+#
+# Install Needed Software
+#
+sudo apt install git
+sudo apt-get install apache2
+sudo apt-get install php
+
+# better vim
+sudo apt-get install vim
+
+#
+# Clone Project
+#
+mkdir github
+cd github/
+git clone https://github.com/lowerpower/SainSmartUsbRelay.git
+git clone https://github.com/lowerpower/fire-controller-web.git
+
+
+#
+# Configure
+#
+
