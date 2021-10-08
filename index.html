@@ -467,7 +467,9 @@ function playlist_play()
             while(current_play_file.length)
             {
                 data=current_play_file.shift();
-                if(data.length>4)
+
+                // break only if greater that 4 len and doesnt start wiht #
+                if((data.length>4) && (data.charAt(0)!='#'))
                     break;
             }
 
