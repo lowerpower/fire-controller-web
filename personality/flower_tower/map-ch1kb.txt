@@ -1,0 +1,57 @@
+#map file, mape a note and a channel to a relay, multiple items can be mapped to the same relay,
+#note channel relay
+#
+# Brass-Ring Map File brass ring runs on midi channel 1, we are mapping midi note numbers directly to relay numbers
+# Note channel relay
+#
+1 1 22
+2 1 23
+3 1 24
+4 1 25
+5 1 26
+6 1 27
+7 1 28
+8 1 29
+9 1 30
+10 1 32
+11 1 32
+12 1 33
+13 1 34
+14 1 35
+15 1 36
+16 1 37
+17 1 38
+18 1 39
+19 1 40
+20 1 41
+21 1 42
+22 1 43
+23 1 44
+24 1 45
+25 1 46
+26 1 47
+27 1 48
+28 1 49
+29 1 50
+30 1 51
+31 1 52
+32 1 53
+33 1 54
+34 1 55
+35 1 56
+36 1 57
+37 1 58
+38 1 59
+39 1 60
+40 1 61
+41 1 62
+42 1 63
+43 1 64
+44 1 65
+45 1 66
+46 1 67
+
+
+
+
+
