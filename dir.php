@@ -15,7 +15,7 @@ function scan_dir($dir) {
         $files[$file] = filemtime($dir . '/' . $file);
     }
 
-    arsort($files);
+//    arsort($files);
     $files = array_keys($files);
 
 /*    foreach ($files as $file){
