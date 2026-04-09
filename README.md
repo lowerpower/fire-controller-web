@@ -126,8 +126,9 @@ the currently selected personality.
 
 ## Websocket Interface To Relay Controller
 
-A WebSocket interface is available on port `8080` on the controller. The
-interface is simple. The following commands are supported:
+The relay controller exposes a WebSocket-compatible backend through
+`websocketd` on port `8080`, but browsers on this Pi should use Apache on port
+`80` via `/ws/`. The interface is simple. The following commands are supported:
 
 - `set <bitmask> [time]`
 - Sets the bitmask.
