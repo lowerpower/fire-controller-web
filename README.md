@@ -86,6 +86,10 @@ interface is simple. The following commands are supported:
 - `get`
 - Returns the current state bitmask.
 
+On this Pi, the browser does not connect directly to port `8080`. Apache
+proxies `/ws/` on port `80` to the backend WebSocket service on `127.0.0.1:8080`.
+This keeps the browser UI and WebSocket traffic on the same origin and port.
+
 ## Requirements
 
 https://github.com/lowerpower/SainSmartUsbRelay

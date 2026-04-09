@@ -34,26 +34,18 @@ function wsKeepAlive()
         new_uri = "ws:";
     }
 
-
     if (typeof wshost !== 'undefined') {
-        // the variable is defined
-        var url = new URL(new_uri+"//"+ wshost);
-        url.port = '';
+        var url = new URL(new_uri + "//" + wshost + "/ws/");
         new_uri = url;
-    }else {
-        //new_uri += "//" + loc.host + ":8080";
-        var url = new URL(new_uri+"//"+ loc.host + loc.pathname);
-        url.port = '8080';
-        new_uri = url;
+    } else {
+        new_uri = new_uri + "//" + loc.host + "/ws/";
     }
-    
-    //new_uri += loc.pathname ;
 
     function next() {
       ws.send('set '+Math.floor((Math.random() * 0xffffffff) + 1));
     }
 
-    console.log("websock connect to "+new_uri+"   loc.pathname="+loc.pathname);
+    console.log("websock connect to "+new_uri);
     
     var ws = new WebSocket(new_uri);
 
