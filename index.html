@@ -534,6 +534,62 @@ function playlist_pause_action()
     playlist_do_pause=1;
 }
 
+function load_personalities()
+{
+    $.getJSON("/personality.php", {}, function(data) {
+        var select = $('#personality-select');
+        select.empty();
+
+        $.each(data.personalities, function(idx, item) {
+            var option = $('<option></option>').val(item).text(item);
+            if (item === data.current) {
+                option.prop('selected', true);
+            }
+            select.append(option);
+        });
+
+        if (data.current) {
+            $('#personality-current').text("Current: " + data.current);
+        } else {
+            $('#personality-current').text("Current: manual uploads");
+        }
+    }).fail(function(xhr) {
+        $('#personality-current').text("Personality load failed");
+        console.log("personality load failed", xhr.responseText);
+    });
+}
+
+function apply_personality()
+{
+    var personality = $('#personality-select').val();
+    if (!personality) {
+        return;
+    }
+
+    $('#personality-current').text("Switching to " + personality + "...");
+
+    $.ajax({
+        url: "/personality.php",
+        method: "POST",
+        dataType: "json",
+        data: {
+            action: "set",
+            personality: personality
+        },
+        success: function(data) {
+            $('#personality-current').text("Current: " + data.current);
+            window.location.reload();
+        },
+        error: function(xhr) {
+            var message = "Personality switch failed";
+            if (xhr.responseJSON && xhr.responseJSON.error) {
+                message += ": " + xhr.responseJSON.error;
+            }
+            $('#personality-current').text(message);
+        }
+    });
+}
+
 function load_dir() 
 {
     var i=0;
@@ -606,6 +662,7 @@ window.onbeforeunload = function () {
 }
 
 window.onload= function() {
+    load_personalities();
     load_dir();
     load_config(current_config,after_config);
 }
@@ -659,6 +716,10 @@ function after_config(){
         load_dir();
     });
 
+    $('#btn-personality-apply').click(function(e) {
+        apply_personality();
+    });
+
     //
     // Play buttons
     //
@@ -710,6 +771,11 @@ function after_config(){
   <div id="mainContent" >
 
     <h4 align="center">Riff Files - Click to Queue</h4>
+    <div class="personality-controls">
+      <select id="personality-select"></select>
+      <button id="btn-personality-apply">Set Personality</button>
+      <div id="personality-current"></div>
+    </div>
     <button id="btn-reload-dir">Reload Dir</button>&nbsp;
     <br />
     
@@ -740,4 +806,3 @@ function after_config(){
 
 
 </html>
-

@@ -255,8 +255,8 @@ function home()
     global $folder, $config, $l;
     maintop($l['TOP_HOME']);
 
-    $content1 = "";
-    $content2 = "";
+    $content1 = array();
+    $content2 = array();
 
     $count = "0";
     $hf    = opendir($folder);
