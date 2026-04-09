@@ -12,6 +12,10 @@ On this Pi there are two copies of the web app:
 
 Edit and commit from the git checkout. Deploy to Apache with `live-sync.sh`.
 
+Additional operational docs:
+
+- `RIFFS.md` for riff-file authoring guidance
+
 ## Data Directories
 
 The web root must have two read/write directories that are accessible by both
