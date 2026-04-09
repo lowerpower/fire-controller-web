@@ -363,6 +363,18 @@ function playlist_clear()
 var current_play_file=[];
 var playlist_do_pause=0;
 var playlist_paused=1;
+var playlist_timer=null;
+
+function playlist_line_delay_ms(line)
+{
+    var parts = $.trim(line).split(/\s+/);
+
+    if (parts.length >= 3 && /^\d+$/.test(parts[2])) {
+        return parseInt(parts[2], 10);
+    }
+
+    return 1;
+}
 
 function playlist_play()
 {
@@ -371,6 +383,10 @@ function playlist_play()
         ws.send('set 0');
         playlist_paused=1;
         playlist_do_pause=0;
+        if (playlist_timer) {
+            clearTimeout(playlist_timer);
+            playlist_timer=null;
+        }
     }
     if(0==playlist_paused)
     {
@@ -396,6 +412,10 @@ function playlist_play()
             {
                 ws.send(data);
                 console.log("sending file line : ",data);
+                playlist_timer = setTimeout(function() {
+                    playlist_timer=null;
+                    playlist_play();
+                }, playlist_line_delay_ms(data));
             }
         }
         else
@@ -424,7 +444,7 @@ function playlist_play()
             else
             {
                 // empty, pause
-                playlist_pause=1;
+                playlist_paused=1;
             }
         }
     }
@@ -432,6 +452,10 @@ function playlist_play()
 
 function playlist_start()
 {
+    if (playlist_timer) {
+        clearTimeout(playlist_timer);
+        playlist_timer=null;
+    }
     playlist_paused=0;
     playlist_play();           
 }
@@ -440,6 +464,10 @@ function playlist_pause_action()
 {
     // Set Pause Flag, engine will pause and send set 0
     playlist_do_pause=1;
+    if (playlist_timer) {
+        clearTimeout(playlist_timer);
+        playlist_timer=null;
+    }
 }
 
 function load_dir() 
