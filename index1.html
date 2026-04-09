@@ -55,6 +55,12 @@
       console.log('message');
       console.log("from websocket: ",data.data);
 
+      if (playlist_timer) {
+        clearTimeout(playlist_timer);
+        playlist_timer=null;
+      }
+      playlist_waiting_for_reply=0;
+
       // Update Grid
       update_grid("grid-",data.data);
 
@@ -364,6 +370,7 @@ var current_play_file=[];
 var playlist_do_pause=0;
 var playlist_paused=1;
 var playlist_timer=null;
+var playlist_waiting_for_reply=0;
 
 function playlist_line_delay_ms(line)
 {
@@ -383,6 +390,7 @@ function playlist_play()
         ws.send('set 0');
         playlist_paused=1;
         playlist_do_pause=0;
+        playlist_waiting_for_reply=0;
         if (playlist_timer) {
             clearTimeout(playlist_timer);
             playlist_timer=null;
@@ -390,6 +398,8 @@ function playlist_play()
     }
     if(0==playlist_paused)
     {
+        if (playlist_waiting_for_reply)
+            return;
         // pop off next line
         if(current_play_file.length>0)
         {
@@ -412,10 +422,12 @@ function playlist_play()
             {
                 ws.send(data);
                 console.log("sending file line : ",data);
+                playlist_waiting_for_reply=1;
                 playlist_timer = setTimeout(function() {
                     playlist_timer=null;
+                    playlist_waiting_for_reply=0;
                     playlist_play();
-                }, playlist_line_delay_ms(data));
+                }, Math.max(playlist_line_delay_ms(data) + 500, 1000));
             }
         }
         else
@@ -456,6 +468,7 @@ function playlist_start()
         clearTimeout(playlist_timer);
         playlist_timer=null;
     }
+    playlist_waiting_for_reply=0;
     playlist_paused=0;
     playlist_play();           
 }
@@ -468,6 +481,7 @@ function playlist_pause_action()
         clearTimeout(playlist_timer);
         playlist_timer=null;
     }
+    playlist_waiting_for_reply=0;
 }
 
 function load_dir() 
