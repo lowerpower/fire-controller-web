@@ -58,6 +58,57 @@ When a personality is active, uploads and file edits go directly into that
 personality directory because the rest of the UI always reads and writes
 through `/uploads/...`.
 
+## Personalities
+
+A personality is a complete set of controller content for one sculpture or
+layout. In practice, a personality directory usually contains:
+
+- `config.conf` for the relay/grid layout
+- `map.txt` for MIDI note-to-relay mapping
+- riff files used by the playlist UI
+
+Examples live under:
+
+- `/var/www/html/personality/medusa`
+- `/var/www/html/personality/fire_bar`
+- `/var/www/html/personality/flower_tower`
+
+Operational model:
+
+- The UI always reads from `/uploads/...`
+- The active personality is selected by making `uploads` a symlink to
+  `personality/<name>`
+- Uploads and file-manager edits therefore modify the active personality
+  directly
+
+If `uploads` is a normal directory instead of a symlink, the UI still works,
+but it is operating on that standalone directory rather than on a named
+personality.
+
+To check the active personality from the shell:
+
+```sh
+readlink -f /var/www/html/uploads
+```
+
+To switch personality from the shell:
+
+```sh
+curl -X POST -d 'action=set&personality=medusa' http://127.0.0.1/personality.php
+```
+
+Creating a new personality is usually easiest by copying an existing one:
+
+```sh
+cp -a /var/www/html/personality/medusa /var/www/html/personality/new_show
+```
+
+Then switch to it with `personality.php`, the main-page selector, or by
+repointing `uploads`.
+
+After switching personality, reload the browser page so the grid config and
+riff list refresh from the newly selected files.
+
 ## Upload And File Editing
 
 Two web interfaces write to the active `uploads` location:
