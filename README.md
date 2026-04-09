@@ -304,6 +304,16 @@ The script intentionally preserves runtime paths:
 - `playdir`
 - `uploads.manual-backup-*`
 
+The script also uses `rsync --delete`, which means:
+
+- `deploy` removes non-runtime files from `/var/www/html` if they are not in
+  the repo
+- `capture` removes non-runtime files from the repo if they exist only in the
+  live web root
+
+So if you made ad hoc changes outside the normal tracked files, review
+`./live-sync.sh status` carefully before running `deploy` or `capture`.
+
 ## Notes For Live Systems
 
 This deploy/capture split exists because production edits often happen on the
