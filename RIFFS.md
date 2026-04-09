@@ -137,6 +137,21 @@ If unsure, author conservative patterns first:
 - shorter hold times
 - explicit off steps between bursts
 
+## Large Fire Effects
+
+If an effect is labeled `BOMB`, `Bomb`, or `bomb`, treat it as a large fire
+effect.
+
+Operational guidance:
+
+- do not trigger it as rapidly as smaller effects
+- give it additional recharge and recovery time
+- avoid placing repeated `BOMB` activations in fast chase patterns
+- prefer longer pauses before the next large hit
+
+For AI authoring and show design, `BOMB`-type effects should be treated as
+high-impact accents rather than fast rhythmic elements.
+
 ## Authoring Workflow
 
 Recommended process:
@@ -171,6 +186,8 @@ rules:
   not to.
 - Do not invent relay meanings; infer style from existing riffs in the same
   personality.
+- Treat any effect labeled `BOMB` or `bomb` as a large effect that needs extra
+  spacing and recharge time.
 
 ## Examples
 

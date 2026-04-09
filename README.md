@@ -171,6 +171,13 @@ From those examples:
 The current loader uses simple space splitting, so labels should be a single
 token with no spaces.
 
+Design guidance:
+
+- Arrange `grid_position` entries so the UI resembles the overhead physical
+  layout of the sculpture.
+- The goal is not just numeric ordering. The grid should visually map to the
+  real-world burner layout so operators can trigger effects by position.
+
 Changes to `config.conf` take effect after reloading the browser page.
 
 ## map.txt Format
