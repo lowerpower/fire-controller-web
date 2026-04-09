@@ -124,6 +124,103 @@ Default file-manager login on this image:
 The file manager is restricted to `../uploads/`, so it automatically follows
 the currently selected personality.
 
+## config.conf Format
+
+The grid UI reads:
+
+- `/uploads/config.conf`
+
+Each non-empty line is split on spaces and interpreted as:
+
+```txt
+<grid_position> <relay_number> [label] [impulse_time]
+```
+
+Meaning:
+
+- `grid_position`: the button position in the UI grid, starting at `1`
+- `relay_number`: the relay to fire when that grid position is clicked
+- `label`: optional short label shown on the button
+- `impulse_time`: optional hold time sent with the `set` command
+
+Behavior:
+
+- If `relay_number` is `0`, the grid position is disabled.
+- If `label` is omitted, the grid may show the numeric position instead.
+- If `impulse_time` is omitted, the UI defaults to `1`.
+
+Examples:
+
+```txt
+1 1 A11 10
+2 2 A12 10
+3 0
+6 7 G 100
+```
+
+From those examples:
+
+- grid position `1` fires relay `1`, shows label `A11`, uses impulse `10`
+- grid position `3` is disabled
+- grid position `6` fires relay `7`, shows label `G`, uses impulse `100`
+
+The current loader uses simple space splitting, so labels should be a single
+token with no spaces.
+
+Changes to `config.conf` take effect after reloading the browser page.
+
+## map.txt Format
+
+The MIDI daemon reads:
+
+- `/uploads/map.txt`
+
+Each non-comment line is interpreted as:
+
+```txt
+<note> <channel> <relay>
+```
+
+Meaning:
+
+- `note`: MIDI note number
+- `channel`: zero-based MIDI channel as used by `midi2relay`
+- `relay`: relay number to activate
+
+Valid ranges from the current MIDI code and docs:
+
+- `note`: `0` to `127`
+- `channel`: `0` to `15`
+- `relay`: `1` to `255`
+
+Notes:
+
+- Lines starting with `#` are comments.
+- Relay numbering is effectively 1-based.
+- Multiple note/channel pairs may map to the same relay.
+- The comments in some shipped map files explain the zero-based channel
+  convention, for example `our channel 2 = midi channel 3`.
+
+Examples:
+
+```txt
+108 0 1
+107 0 16
+1 3 1
+2 3 2
+```
+
+Changes to `map.txt` are picked up by `midi2relay` when the file modification
+time changes. The daemon checks periodically rather than on every packet, so
+reload is not necessarily instant.
+
+## When Changes Take Effect
+
+- `config.conf`: reload the browser page
+- riff files: use `Reload Dir` in the UI or reload the page
+- `map.txt`: wait for `midi2relay` to reload the file, or restart the monitor
+  stack if you want it applied immediately
+
 ## Websocket Interface To Relay Controller
 
 The relay controller exposes a WebSocket-compatible backend through
