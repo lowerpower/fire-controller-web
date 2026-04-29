@@ -337,6 +337,11 @@ function click_dir(item)
 
 }
 
+function display_name(item)
+{
+    return item.replace(/\.[^/.]+$/, '');
+}
+
 //
 // Append an item to the end of the playlist
 //
@@ -346,7 +351,8 @@ function playlist_item_append(item)
 
     var tr   = table.appendChild(document.createElement('tr'));
     var cell = tr.appendChild(document.createElement('td'));
-    cell.innerHTML=item;
+    cell.innerHTML=display_name(item);
+    cell.setAttribute('data-filename', item);
 }
 
 
@@ -433,7 +439,7 @@ function playlist_play()
         else
         {
             // Get Next File, get name from top of list
-            var id = $("#play-table").find("td:first").text();
+            var id = $("#play-table").find("td:first").attr("data-filename");
 
             if(id.length)
             {
@@ -500,7 +506,7 @@ function load_dir()
             var cell = tr.appendChild(document.createElement('td'));
             console.log("item:",item);
 
-            cell.innerHTML=item;
+            cell.innerHTML=display_name(item);
             cell.addEventListener('click',(function(item){
                 return function(){
                     click_dir(item);
