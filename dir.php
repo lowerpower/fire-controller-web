@@ -6,11 +6,12 @@
 
 
 function scan_dir($dir) {
-    $ignored = array('.', '..', '.svn', '.htaccess','config.conf','map.txt','map-final.txt','t');
+    $ignored = array('.', '..', '.svn', '.htaccess','config.conf','t');
 
     $files = array();    
     $out = array();    
     foreach (scandir($dir) as $file) {
+        if (stripos($file, 'map') === 0) continue;
         if (in_array($file, $ignored)) continue;
         $files[$file] = filemtime($dir . '/' . $file);
     }
@@ -36,5 +37,4 @@ $data=scan_dir($dir);
 //   print 
 
 echo(json_encode($data));
-
 
