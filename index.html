@@ -243,6 +243,11 @@ function build_grid()
 
     // Translate
     j=current_config.map[i];
+    if((typeof j === 'undefined') || !/^\d+$/.test(String(j)) || (parseInt(j, 10) <= 0) || (el.className == 'disabled'))
+    {
+        return;
+    }
+    j=parseInt(j, 10);
     
     console.log("translate to relay:",j);
 
@@ -321,13 +326,13 @@ function clickableGrid( rows, cols, callback ){
             }
             else 
             {
-                if(0==current_config.map[i])
+                if((typeof current_config.map[i] === 'undefined') || (0==current_config.map[i]))
                     cell.className='disabled';
                 cell.innerHTML = current_config.name[i];
 
             }
             cell.id="grid-"+i;
-            if(0!=current_config.map[i])
+            if((typeof current_config.map[i] !== 'undefined') && (0!=current_config.map[i]))
             {
                 cell.addEventListener('click',(function(el,r,c,i){
                     return function(){
@@ -354,19 +359,40 @@ function load_config(current_config)
                 //
                 // Make correct array
                 for(i in arr) {
-                    console.log("i = "+arr[i]); 
-                    el=arr[i].split(" ");
+                    var line = $.trim(arr[i]);
+                    var el;
+                    var position;
+                    var relay;
+
+                    console.log("i = "+line); 
+                    if(!line) {
+                        continue;
+                    }
+
+                    if((line.charAt(0) === '#') || /^rem\b/i.test(line)) {
+                        continue;
+                    }
+
+                    el=line.split(/\s+/);
                     console.log("e = "+el); 
-                    if(el[0])
+                    if(el[0] && /^\d+$/.test(el[0]))
                     {
-                        console.log("e = "+el); 
-                        current_config.map[el[0]]=el[1];
-                        current_config.relay[el[1]]=el[0];
+                        position=parseInt(el[0], 10);
+
+                        // A line with only the grid position is an intentionally unused cell.
+                        if(el.length < 2 || !/^\d+$/.test(el[1])) {
+                            current_config.map[position]=0;
+                            continue;
+                        }
+
+                        relay=parseInt(el[1], 10);
+                        current_config.map[position]=relay;
+                        current_config.relay[relay]=position;
                         if(el.length>2)
                         {
-                            current_config.name[el[0]]=el[2];
+                            current_config.name[position]=el[2];
                             if(el.length>3)
-                                current_config.impulse[el[0]]=el[3];
+                                current_config.impulse[position]=el[3];
                         }
                     }
                 }
