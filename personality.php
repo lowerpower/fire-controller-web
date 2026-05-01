@@ -34,33 +34,52 @@ function list_personalities($dir)
     return $out;
 }
 
+function absolute_symlink_target($link_path)
+{
+    $target = readlink($link_path);
+    if ($target === false) {
+        return false;
+    }
+
+    if ($target !== '' && $target[0] === '/') {
+        return $target;
+    }
+
+    return dirname($link_path) . '/' . $target;
+}
+
 function current_personality($uploads_path, $personality_dir)
 {
     if (!is_link($uploads_path)) {
         return null;
     }
 
-    $target = readlink($uploads_path);
-    if ($target === false) {
-        return null;
-    }
-
-    if ($target[0] !== '/') {
-        $target = realpath(dirname($uploads_path) . '/' . $target);
-    } else {
-        $target = realpath($target);
-    }
-
+    $target = absolute_symlink_target($uploads_path);
     $base = realpath($personality_dir);
     if ($target === false || $base === false) {
         return null;
     }
 
-    if (strpos($target, $base . DIRECTORY_SEPARATOR) !== 0) {
+    $prefix = rtrim($base, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+    if (strpos($target, $prefix) !== 0) {
         return null;
     }
 
     return basename($target);
+}
+
+function current_personality_exists($uploads_path)
+{
+    if (!is_link($uploads_path)) {
+        return false;
+    }
+
+    $target = absolute_symlink_target($uploads_path);
+    if ($target === false) {
+        return false;
+    }
+
+    return is_dir($target);
 }
 
 function backup_uploads_dir($uploads_path)
@@ -158,4 +177,5 @@ json_response(array(
     'personalities' => $personalities,
     'uploads_path' => $uploads_path,
     'uploads_is_link' => is_link($uploads_path),
+    'current_exists' => current_personality_exists($uploads_path),
 ));
