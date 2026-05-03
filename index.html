@@ -67,16 +67,8 @@ function wsKeepAlive()
 
       if(data.data!=='pong')
       {
-        if (playlist_timer) {
-            clearTimeout(playlist_timer);
-            playlist_timer=null;
-        }
-        playlist_waiting_for_reply=0;
         // Update Grid
         update_grid("grid-",data.data);
-
-        // try to play the next element of playlist
-        playlist_play();
       }
 
     };
@@ -175,7 +167,7 @@ function update_grid(grid_id,bitmask_str)
         // check bitmask
         if(i<=32)
         {
-            if( bitmask1 & (1<<(i-33)) )
+            if( bitmask1 & (1<<(i-1)) )
             {
                 el.className='clicked';
             }
@@ -187,7 +179,7 @@ function update_grid(grid_id,bitmask_str)
         }
         else if (i<=64)
         {
-            if( bitmask2 &  Math.abs(1<<(i-1))  )
+            if( bitmask2 & (1<<(i-33)) )
             {
                 el.className='clicked';
             }
@@ -199,7 +191,7 @@ function update_grid(grid_id,bitmask_str)
         }
         else if (i<=96)
         {
-            if( bitmask3 &  Math.abs(1<<(i-1))  )
+            if( bitmask3 & (1<<(i-65)) )
             {
                 el.className='clicked';
             }
@@ -211,7 +203,7 @@ function update_grid(grid_id,bitmask_str)
         }
         else if (i<=128)
         {
-            if( bitmask4 &  Math.abs(1<<(i-1))  )
+            if( bitmask4 & (1<<(i-97)) )
             {
                 el.className='clicked';
             }
@@ -494,12 +486,13 @@ function playlist_line_delay_ms(line)
 
 function playlist_play()
 {
+    var data;
+
     if((playlist_do_pause) && (0==playlist_paused))
     {
         ws.send('set 0');
         playlist_paused=1;
         playlist_do_pause=0;
-        playlist_waiting_for_reply=0;
         if (playlist_timer) {
             clearTimeout(playlist_timer);
             playlist_timer=null;
@@ -507,11 +500,10 @@ function playlist_play()
     }
     if(0==playlist_paused)
     {
-        if (playlist_waiting_for_reply)
-            return;
         // pop off next line
         if(current_play_file.length>0)
         {
+            data = null;
             // pop off next element and send it
             while(current_play_file.length)
             {
@@ -520,9 +512,10 @@ function playlist_play()
                 // break only if greater that 4 len and doesnt start wiht #
                 if((data.length>4) && (data.charAt(0)!='#'))
                     break;
+                data = null;
             }
 
-            if(0==current_play_file.length)
+            if(data === null)
             {
                 // delete the top of the play list
                 playlist_item_delete();    
@@ -537,12 +530,10 @@ function playlist_play()
                 this_time=milliseconds-last_time;
                 console.log("["+milliseconds+"] D["+this_time+"] sending file line : ",data);
                 last_time=milliseconds;
-                playlist_waiting_for_reply=1;
                 playlist_timer = setTimeout(function() {
                     playlist_timer=null;
-                    playlist_waiting_for_reply=0;
                     playlist_play();
-                }, Math.max(playlist_line_delay_ms(data) + 500, 1000));
+                }, Math.max(playlist_line_delay_ms(data), 1));
             }
         }
         else
@@ -550,10 +541,11 @@ function playlist_play()
             // Get Next File, get name from top of list
             var id = $("#play-table").find("td:first").attr("data-filename");
 
-            if(id.length)
+            if(id && id.length)
             {
                 $.ajax({
-                  url: "/uploads/"+id,
+                  url: "/playfile.php?name=" + encodeURIComponent(id),
+                  dataType: "text",
                   success: function(data){
                     // load data into our play array
                     current_play_file=data.split("\n");  
@@ -583,7 +575,6 @@ function playlist_start()
         clearTimeout(playlist_timer);
         playlist_timer=null;
     }
-    playlist_waiting_for_reply=0;
     playlist_paused=0;
     playlist_play();           
 }
@@ -596,7 +587,6 @@ function playlist_pause_action()
         clearTimeout(playlist_timer);
         playlist_timer=null;
     }
-    playlist_waiting_for_reply=0;
 }
 
 function load_personalities()
