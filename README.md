@@ -329,3 +329,16 @@ If the repo was edited first:
 
 1. Commit from `/home/pi/github/fire-controller-web`
 2. Run `./live-sync.sh deploy`
+
+## License
+
+MIT for the code in this repository. See [LICENSE](LICENSE).
+
+Bundled third-party components keep their own licenses:
+
+| Path | Component | License |
+|---|---|---|
+| `fm/` | [php_srrFileManager](https://github.com/caos30/php_srrFileManager) | GPL-2.0 (`fm/LICENSE.txt`) |
+| `editor/` | widgEditor, Cameron Adams | GPL-2.0 or later |
+| `js/jquery-1.12.4.js`, `js/jquery.min.js` | jQuery | MIT |
+| `js/jquery.uploadfile.min.js` | jQuery Upload File, Ravishanker Kusuma | MIT |
