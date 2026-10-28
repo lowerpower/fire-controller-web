@@ -1,9 +1,9 @@
 # fire-controller-web
 Web UI for the Reared In Steel (https://www.facebook.com/rearedinsteel/) flower tower fire controller.
 
-> **Safety: private network only.** This UI fires live propane effects and
-> has no login or authentication: anyone who can load the page can fire
-> them. Run it only on a closed, private network that you control, and never
+> **Safety: private network only.** This UI fires live propane effects, and
+> the fire controls have no login or authentication: anyone who can load the
+> page can fire them. Run it only on a closed, private network that you control, and never
 > expose it to the internet (no port forwarding, no public hosting). The
 > bundled jQuery 1.12.4 has known cross-site scripting issues, which is one
 > more reason to keep the UI off public networks.
